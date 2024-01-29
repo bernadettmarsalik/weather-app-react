@@ -111,7 +111,7 @@ const DisplayWeather = () => {
 
       case "Clouds":
         iconElement = <BsCloudyFill />;
-        iconColor = "#4111ee";
+        iconColor = "#5b89a4";
         break;
 
       case "Mist":
