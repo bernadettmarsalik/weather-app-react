@@ -9,7 +9,7 @@ html {
 .App {
   background-image: linear-gradient(to bottom, #fff9f6 0%, #b3d4e3 100%);
   background-size: cover;
-  background-repeat: no-repeat;
+  background-repeat: round;
   height: 100vh;
 }
 
@@ -50,35 +50,41 @@ html {
 @media (max-width: 575.98px) {
   .app-wrapper {
     width: 90%;
+    height: 100vh;
   }
 }
 
 @media (min-width: 576px) {
   .app-wrapper {
     width: 90%;
+    height: 100vh;
   }
 }
 
 @media (min-width: 768px) {
   .app-wrapper {
     width: 80%;
+    height: 100vh;
   }
 }
 
 @media (min-width: 992px) {
   .app-wrapper {
     width: 80%;
+    height: 100vh;
   }
 }
 
 @media (min-width: 1200px) {
   .app-wrapper {
     width: 30%;
+    height: 100vh;
   }
 }
 
 @media (min-width: 1400px) {
   .app-wrapper {
     width: 30%;
+    height: 100vh;
   }
 }

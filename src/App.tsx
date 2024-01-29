@@ -8,7 +8,7 @@ function App() {
   return (
     <div className="App">
       <div
-        className="d-flex flex-column justify-content-between align-items-center h-100 w-100"
+        className="d-flex flex-column justify-content-between align-items-center vh-100"
         id="apps"
       >
         <Header />
