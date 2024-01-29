@@ -9,8 +9,8 @@ html {
 .App {
   background-image: linear-gradient(to bottom, #fff9f6 0%, #b3d4e3 100%);
   background-size: cover;
-  background-repeat: round;
-  height: 100vh;
+  background-repeat: no-repeat;
+  min-height: 100vh !important;
 }
 
 .searchIcon {
