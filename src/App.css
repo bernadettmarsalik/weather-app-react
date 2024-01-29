@@ -7,10 +7,12 @@ html {
 }
 
 .App {
-  background-image: linear-gradient(to bottom, #fff9f6 0%, #b3d4e3 100%);
-  background-size: cover;
-  background-repeat: no-repeat;
-  min-height: 100% !important;
+  height: 60vh !important;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  justify-items: center;
+  align-items: center;
 }
 
 .searchIcon {
@@ -60,7 +62,7 @@ footer {
 
 @media (min-width: 768px) {
   .app-wrapper {
-    width: 80%;
+    width: 40%;
   }
 }
 

@@ -79,9 +79,9 @@ const DisplayWeather = () => {
     return backgroundChanger(weather);
   };
   return (
-    <div className="app-wrapper container">
+    <div className="app-wrapper container-fluid mt-3">
       <div
-        className="container shadow text-center p-3 rounded-5"
+        className="container shadow text-center p-4 rounded-5"
         style={{
           backgroundImage: `url(${
             weatherData && isLoading
@@ -109,45 +109,41 @@ const DisplayWeather = () => {
         </div>
 
         {weatherData && isLoading ? (
-          <>
-            <div className="weatherArea my-5">
-              <div
-                className="badge bg-transparent p-3 mb-3 rounded-5 shadow w-100"
-                style={{ backdropFilter: "blur(8px)" }}
-              >
-                <h1 className="fs-1 mb-3">{weatherData.name}</h1>
-                <span className="fs-4 mb-5 mb-3">
-                  {weatherData.sys.country}
-                </span>
+          <div className="weatherArea my-1 p-3">
+            <div
+              className="badge bg-transparent p-3 mb-3 rounded-5 shadow w-100"
+              style={{ backdropFilter: "blur(8px)" }}
+            >
+              <h1 className="fs-1 mb-3">{weatherData.name}</h1>
+              <span className="fs-4 mb-5 mb-3">{weatherData.sys.country}</span>
+            </div>
+            <div className="container bg-light rounded-5 p-3 shadow">
+              <div className="icon mb-2 ">
+                {renderWeatherIcon(weatherData.weather[0].main)}{" "}
               </div>
-              <div className="container bg-light rounded-5 p-2 shadow">
-                <div className="icon mb-2">
-                  {renderWeatherIcon(weatherData.weather[0].main)}{" "}
+              <h1 className="mb-3">{Math.round(weatherData.main.temp)} °C</h1>
+              <h2 className="mb-3">{weatherData.weather[0].main}</h2>
+            </div>
+            <div className="bottomInfoArea container rounded-5 d-flex flex-wrap justify-content-around mt-3 p-3 bg-light shadow">
+              <div className="humidity p-2">
+                <WiHumidity className="weatherIcon" />
+                <div className="weatherInfo">
+                  <h1>{weatherData.main.humidity}%</h1>
+                  <p>humidity</p>
                 </div>
-                <h1 className="mb-3">{Math.round(weatherData.main.temp)} °C</h1>
-                <h2 className="mb-5">{weatherData.weather[0].main}</h2>
               </div>
-              <div className="bottomInfoArea container rounded-5 d-flex justify-content-around mt-5 p-2 bg-light shadow">
-                <div className="humidity">
-                  <WiHumidity className="weatherIcon" />
-                  <div className="weatherInfo">
-                    <h1>{weatherData.main.humidity}%</h1>
-                    <p>humidity</p>
-                  </div>
-                </div>
 
-                <div className="wind">
-                  <SiWindicss className="weatherIcon" />
-                  <div className="weatherInfo">
-                    <h1>{weatherData.wind.speed} km/h</h1>
-                    <p>wind speed</p>
-                  </div>
+              <div className="wind p-2">
+                <SiWindicss className="weatherIcon" />
+                <div className="weatherInfo">
+                  <h1>{weatherData.wind.speed} km/h</h1>
+                  <p>wind speed</p>
                 </div>
               </div>
             </div>
-          </>
+          </div>
         ) : (
-          <div className="loading my-5">
+          <div className="loading my-3">
             <RiLoaderFill className="loadingIcon" />
             <p>loading...</p>
           </div>
