@@ -11,7 +11,6 @@ import {
 import { RiLoaderFill } from "react-icons/ri";
 import { TiWeatherPartlySunny } from "react-icons/ti";
 import { BsSnow } from "react-icons/bs";
-
 import axios from "axios";
 
 // interface
@@ -38,7 +37,7 @@ const DisplayWeather = () => {
   const api_Endpoint = "https://api.openweathermap.org/data/2.5/";
 
   // fetch current weather
-  const fetchCurrentWeather = React.useCallback(
+  const fetchCurrentWeather = useCallback(
     async (lat: number, lon: number) => {
       const url = `${api_Endpoint}weather?lat=${lat}&lon=${lon}&appid=${api_key}&units=metric`;
       const response = await axios.get(url);
