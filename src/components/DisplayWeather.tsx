@@ -79,7 +79,7 @@ const DisplayWeather = () => {
     return backgroundChanger(weather);
   };
   return (
-    <div className="app-wrapper">
+    <div className="app-wrapper container">
       <div
         className="container shadow text-center p-3 rounded-5"
         style={{

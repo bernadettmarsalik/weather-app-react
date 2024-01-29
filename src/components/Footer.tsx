@@ -7,8 +7,8 @@ const Footer = () => {
 
   return (
     <div>
-      <footer className="text-center text-dark">
-        <div className="container">
+      <footer className="text-center text-dark mt-3">
+        <span className="me-5">
           <strong>Current Weather App </strong> by Bernadett Marsalik
           <span>
             <a
@@ -28,8 +28,8 @@ const Footer = () => {
               <FaLinkedin />
             </a>
           </span>
-        </div>
-        <div className="container">
+        </span>
+        <span>
           <img
             alt="Open Weather Logo"
             style={{ width: 100 }}
@@ -46,7 +46,7 @@ const Footer = () => {
               OpenWeather
             </a>
           </span>
-        </div>
+        </span>
       </footer>
     </div>
   );
