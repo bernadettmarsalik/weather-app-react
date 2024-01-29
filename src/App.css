@@ -1,38 +1,83 @@
+*,
+html {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
 .App {
-  text-align: center;
+  background-image: linear-gradient(to bottom, #fff9f6 0%, #b3d4e3 100%);
+  background-size: cover;
+  background-repeat: no-repeat;
+  height: 100vh;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+.searchIcon {
+  font-size: 2rem;
+  color: grey;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+.icon {
+  font-size: 9rem;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+.weatherIcon {
+  font-size: 4rem;
 }
 
-.App-link {
-  color: #61dafb;
+.loadingIcon {
+  font-size: 3rem;
+  animation: spin 2s linear infinite;
 }
 
-@keyframes App-logo-spin {
+.background-overlay {
+  background-size: cover;
+  background-repeat: no-repeat;
+  filter: blur(10px);
+}
+
+@keyframes spin {
   from {
     transform: rotate(0deg);
   }
   to {
     transform: rotate(360deg);
+  }
+}
+
+/* media query */
+@media (max-width: 575.98px) {
+  .app-wrapper {
+    width: 90%;
+  }
+}
+
+@media (min-width: 576px) {
+  .app-wrapper {
+    width: 90%;
+  }
+}
+
+@media (min-width: 768px) {
+  .app-wrapper {
+    width: 80%;
+  }
+}
+
+@media (min-width: 992px) {
+  .app-wrapper {
+    width: 80%;
+  }
+}
+
+@media (min-width: 1200px) {
+  .app-wrapper {
+    width: 30%;
+  }
+}
+
+@media (min-width: 1400px) {
+  .app-wrapper {
+    width: 30%;
   }
 }

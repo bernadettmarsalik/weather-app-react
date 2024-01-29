@@ -1,5 +1,4 @@
-import React, { useState } from "react";
-import { MainWrapper } from "./styles.module";
+import React, { useCallback, useEffect, useState } from "react";
 import { AiOutlineSearch } from "react-icons/ai";
 import { WiHumidity } from "react-icons/wi";
 import { SiWindicss } from "react-icons/si";
@@ -11,6 +10,8 @@ import {
 } from "react-icons/bs";
 import { RiLoaderFill } from "react-icons/ri";
 import { TiWeatherPartlySunny } from "react-icons/ti";
+import { BsSnow } from "react-icons/bs";
+
 import axios from "axios";
 
 // interface
@@ -46,13 +47,13 @@ const DisplayWeather = () => {
     [api_Endpoint, api_key]
   );
 
-  // fetch  input weather
-  const fetchInputWeather = async (city: string) => {
+  // fetch input weather
+  const fetchWeatherData = async (city: string) => {
     try {
       const url = `${api_Endpoint}weather?q=${city}&appid=${api_key}&units=metric`;
-      const response = await axios.get(url);
+      const searchResponse = await axios.get(url);
 
-      const currentWeatherData: WeatherDataProps = response.data;
+      const currentWeatherData: WeatherDataProps = searchResponse.data;
       return { currentWeatherData };
     } catch (error) {
       throw error;
@@ -64,37 +65,33 @@ const DisplayWeather = () => {
     if (searchCity.trim() === "") {
       return;
     }
-
     try {
-      const { currentWeatherData } = await fetchInputWeather(searchCity);
+      const { currentWeatherData } = await fetchWeatherData(searchCity);
       setWeatherData(currentWeatherData);
     } catch (error) {}
   };
 
   //  weather data
-  const [weatherData, setWeatherData] = React.useState<WeatherDataProps | null>(
-    null
-  );
+  const [weatherData, setWeatherData] = useState<WeatherDataProps | null>(null);
 
   // loading
-  const [isLoading, setIsLoading] = React.useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   // search city
-  const [searchCity, setsearchCity] = React.useState<string>("");
+  const [searchCity, setsearchCity] = useState<string>("");
 
   // location
-  React.useEffect(() => {
+  useEffect(() => {
     navigator.geolocation.getCurrentPosition((position) => {
       const { latitude, longitude } = position.coords;
       Promise.all([fetchCurrentWeather(latitude, longitude)]).then(
         ([currentWeather]) => {
           setWeatherData(currentWeather);
           setIsLoading(true);
-          console.log(currentWeather);
         }
       );
     });
-  });
+  }, []);
 
   // icon changer
   const iconChanger = (weather: string) => {
@@ -109,22 +106,27 @@ const DisplayWeather = () => {
 
       case "Clear":
         iconElement = <BsFillSunFill />;
-        iconColor = "#ffc436";
+        iconColor = "#ffce00";
         break;
 
       case "Clouds":
         iconElement = <BsCloudyFill />;
-        iconColor = "#102c57";
+        iconColor = "#4111ee";
         break;
 
       case "Mist":
         iconElement = <BsCloudFog2Fill />;
-        iconColor = "#279eff";
+        iconColor = "#798386";
+        break;
+
+      case "Snow":
+        iconElement = <BsSnow />;
+        iconColor = "#62929d";
         break;
 
       default:
         iconElement = <TiWeatherPartlySunny />;
-        iconColor = "#7B2869";
+        iconColor = "#ccbd33";
     }
     return (
       <span className="icon" style={{ color: iconColor }}>
@@ -133,59 +135,120 @@ const DisplayWeather = () => {
     );
   };
 
+  // background changer
+  const rain = require("../assets/rain.jpg");
+  const clear = require("../assets/clear.jpg");
+  const clouds = require("../assets/clouds.jpg");
+  const mist = require("../assets/mist.jpg");
+  const def = require("../assets/def.jpg");
+  const snow = require("../assets/snow.jpg");
+
+  const backgroundChanger = (weather: string) => {
+    let bgPic: string;
+
+    switch (weather) {
+      case "Rain":
+        bgPic = rain;
+        break;
+
+      case "Clear":
+        bgPic = clear;
+        break;
+
+      case "Clouds":
+        bgPic = clouds;
+        break;
+
+      case "Mist":
+        bgPic = mist;
+        break;
+
+      case "Snow":
+        bgPic = snow;
+        break;
+
+      default:
+        bgPic = def;
+    }
+    return bgPic;
+  };
+
   return (
-    <MainWrapper>
-      <div className="container">
-        <div className="searchArea">
+    <div className="app-wrapper">
+      <div
+        className="container shadow text-center p-3 rounded-5"
+        style={{
+          backgroundImage: `url(${
+            weatherData && isLoading
+              ? backgroundChanger(weatherData.weather[0].main)
+              : ""
+          })`,
+          backgroundSize: "cover",
+          backgroundRepeat: "no-repeat",
+        }}
+      >
+        <div className="searchArea d-flex justify-content-between align-items-center">
           <input
             type="text"
             placeholder="Enter a city"
+            className="form-control rounded rounded-pill me-3 bg-light"
             value={searchCity}
             onChange={(event) => setsearchCity(event.target.value)}
           />
-
           <div className="searchCircle">
-            <AiOutlineSearch className="searchIcon" onClick={handleSearch} />
+            <AiOutlineSearch
+              className="searchIcon btn btn-lg border rounded-circle border-2 p-1 fs-1 bg-light"
+              onClick={handleSearch}
+            />
           </div>
         </div>
 
         {weatherData && isLoading ? (
           <>
-            <div className="weatherArea">
-              <h1>{weatherData.name}</h1>
-              <span>{weatherData.sys.country}</span>
-              <div className="icon">
-                {iconChanger(weatherData.weather[0].main)}
+            <div className="weatherArea my-5">
+              <div
+                className="badge bg-transparent p-3 mb-3 rounded-5 shadow w-100"
+                style={{ backdropFilter: "blur(8px)" }}
+              >
+                <h1 className="fs-1 mb-3">{weatherData.name}</h1>
+                <span className="fs-4 mb-5 mb-3">
+                  {weatherData.sys.country}
+                </span>
               </div>
-              <h1>{weatherData.main.temp} °C</h1>
-              <h2>{weatherData.weather[0].main}</h2>
-            </div>
-            <div className="bottomInfoArea">
-              <div className="humidity">
-                <WiHumidity className="weatherIcon" />
-                <div className="weatherInfo">
-                  <h1>{weatherData.main.humidity}%</h1>
-                  <p>humidity</p>
+              <div className="container bg-light rounded-5 p-2 shadow">
+                <div className="icon mb-2">
+                  {iconChanger(weatherData.weather[0].main)}
                 </div>
+                <h1 className="mb-3">{Math.round(weatherData.main.temp)} °C</h1>
+                <h2 className="mb-5">{weatherData.weather[0].main}</h2>
               </div>
+              <div className="bottomInfoArea container rounded-5 d-flex justify-content-around mt-5 p-2 bg-light shadow">
+                <div className="humidity">
+                  <WiHumidity className="weatherIcon" />
+                  <div className="weatherInfo">
+                    <h1>{weatherData.main.humidity}%</h1>
+                    <p>humidity</p>
+                  </div>
+                </div>
 
-              <div className="wind">
-                <SiWindicss className="weatherIcon" />
-                <div className="weatherInfo">
-                  <h1>{weatherData.wind.speed} km/h</h1>
-                  <p>wind speed</p>
+                <div className="wind">
+                  <SiWindicss className="weatherIcon" />
+                  <div className="weatherInfo">
+                    <h1>{weatherData.wind.speed} km/h</h1>
+                    <p>wind speed</p>
+                  </div>
                 </div>
               </div>
             </div>
           </>
         ) : (
-          <div className="loading">
+          <div className="loading my-5">
             <RiLoaderFill className="loadingIcon" />
             <p>loading...</p>
           </div>
         )}
       </div>
-    </MainWrapper>
+    </div>
   );
 };
 
