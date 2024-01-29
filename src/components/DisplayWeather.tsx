@@ -1,35 +1,12 @@
-import React, { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+import WeatherDataProps from "../utils/WeatherDataProps";
 import { AiOutlineSearch } from "react-icons/ai";
 import { WiHumidity } from "react-icons/wi";
 import { SiWindicss } from "react-icons/si";
-import {
-  BsFillSunFill,
-  BsCloudyFill,
-  BsFillCloudRainFill,
-  BsCloudFog2Fill,
-} from "react-icons/bs";
 import { RiLoaderFill } from "react-icons/ri";
-import { TiWeatherPartlySunny } from "react-icons/ti";
-import { BsSnow } from "react-icons/bs";
 import axios from "axios";
-
-// interface
-interface WeatherDataProps {
-  name: string;
-  main: {
-    temp: number;
-    humidity: number;
-  };
-  sys: {
-    country: string;
-  };
-  weather: {
-    main: string;
-  }[];
-  wind: {
-    speed: number;
-  };
-}
+import iconChanger from "../utils/iconChanger";
+import backgroundChanger from "../utils/backgroundChanger";
 
 const DisplayWeather = () => {
   // api data
@@ -93,85 +70,14 @@ const DisplayWeather = () => {
   }, []);
 
   // icon changer
-  const iconChanger = (weather: string) => {
-    let iconElement: React.ReactNode;
-    let iconColor: string;
-
-    switch (weather) {
-      case "Rain":
-        iconElement = <BsFillCloudRainFill />;
-        iconColor = "#272829";
-        break;
-
-      case "Clear":
-        iconElement = <BsFillSunFill />;
-        iconColor = "#ffce00";
-        break;
-
-      case "Clouds":
-        iconElement = <BsCloudyFill />;
-        iconColor = "#5b89a4";
-        break;
-
-      case "Mist":
-        iconElement = <BsCloudFog2Fill />;
-        iconColor = "#798386";
-        break;
-
-      case "Snow":
-        iconElement = <BsSnow />;
-        iconColor = "#62929d";
-        break;
-
-      default:
-        iconElement = <TiWeatherPartlySunny />;
-        iconColor = "#ccbd33";
-    }
-    return (
-      <span className="icon" style={{ color: iconColor }}>
-        {iconElement}
-      </span>
-    );
+  const renderWeatherIcon = (weather: string) => {
+    return iconChanger(weather);
   };
 
   // background changer
-  const rain = require("../assets/rain.jpg");
-  const clear = require("../assets/clear.jpg");
-  const clouds = require("../assets/clouds.jpg");
-  const mist = require("../assets/mist.jpg");
-  const def = require("../assets/def.jpg");
-  const snow = require("../assets/snow.jpg");
-
-  const backgroundChanger = (weather: string) => {
-    let bgPic: string;
-
-    switch (weather) {
-      case "Rain":
-        bgPic = rain;
-        break;
-
-      case "Clear":
-        bgPic = clear;
-        break;
-
-      case "Clouds":
-        bgPic = clouds;
-        break;
-
-      case "Mist":
-        bgPic = mist;
-        break;
-
-      case "Snow":
-        bgPic = snow;
-        break;
-
-      default:
-        bgPic = def;
-    }
-    return bgPic;
+  const renderBackground = (weather: string) => {
+    return backgroundChanger(weather);
   };
-
   return (
     <div className="app-wrapper">
       <div
@@ -179,7 +85,7 @@ const DisplayWeather = () => {
         style={{
           backgroundImage: `url(${
             weatherData && isLoading
-              ? backgroundChanger(weatherData.weather[0].main)
+              ? renderBackground(weatherData.weather[0].main)
               : ""
           })`,
           backgroundSize: "cover",
@@ -216,7 +122,7 @@ const DisplayWeather = () => {
               </div>
               <div className="container bg-light rounded-5 p-2 shadow">
                 <div className="icon mb-2">
-                  {iconChanger(weatherData.weather[0].main)}
+                  {renderWeatherIcon(weatherData.weather[0].main)}{" "}
                 </div>
                 <h1 className="mb-3">{Math.round(weatherData.main.temp)} °C</h1>
                 <h2 className="mb-5">{weatherData.weather[0].main}</h2>
