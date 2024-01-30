@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import WeatherDataProps from "../utils/WeatherDataProps";
-import { AiOutlineSearch } from "react-icons/ai";
+import { GrSearch } from "react-icons/gr";
+import { GrLocation } from "react-icons/gr";
 import { WiHumidity } from "react-icons/wi";
 import { SiWindicss } from "react-icons/si";
 import { RiLoaderFill } from "react-icons/ri";
@@ -12,6 +13,17 @@ const DisplayWeather = () => {
   // api data
   const api_key = "94d42ce148641d5fd173f0d463e06fc0";
   const api_Endpoint = "https://api.openweathermap.org/data/2.5/";
+
+  // constants
+  const [geolocationError, setGeolocationError] = useState<string | null>(null);
+  //  weather data
+  const [weatherData, setWeatherData] = useState<WeatherDataProps | null>(null);
+
+  // loading
+  const [isLoading, setIsLoading] = useState(false);
+
+  // search city
+  const [searchCity, setsearchCity] = useState<string>("");
 
   // fetch current weather
   const fetchCurrentWeather = useCallback(
@@ -46,15 +58,6 @@ const DisplayWeather = () => {
       setWeatherData(currentWeatherData);
     } catch (error) {}
   };
-
-  //  weather data
-  const [weatherData, setWeatherData] = useState<WeatherDataProps | null>(null);
-
-  // loading
-  const [isLoading, setIsLoading] = useState(false);
-
-  // search city
-  const [searchCity, setsearchCity] = useState<string>("");
 
   // location
   useEffect(() => {
@@ -99,12 +102,18 @@ const DisplayWeather = () => {
             className="form-control rounded rounded-pill me-3 bg-light"
             value={searchCity}
             onChange={(event) => setsearchCity(event.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") handleSearch();
+            }}
           />
           <div className="searchCircle">
-            <AiOutlineSearch
-              className="searchIcon btn btn-lg border rounded-circle border-2 p-1 fs-1 bg-light"
+            <GrSearch
+              className="searchIcon btn btn-lg border rounded-circle border-2 p-1 fs-1 me-3 bg-light"
               onClick={handleSearch}
             />
+          </div>
+          <div className="geoCircle">
+            <GrLocation className="searchIcon btn btn-lg border rounded-circle border-2 p-1 fs-1 bg-light" />
           </div>
         </div>
 
