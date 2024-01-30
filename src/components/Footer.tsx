@@ -8,8 +8,8 @@ const Footer = () => {
   return (
     <div>
       <footer
-        className="text-center text-dark mt-3 d-flex flex-xxl-row flex-xl-row flex-lg-row flex-md-column flex-sm-column
- justify-content-center"
+        className="text-center text-dark d-flex flex-xxl-row flex-xl-row flex-lg-row flex-md-column flex-sm-column
+ justify-content-center bg-transparent"
       >
         <div>
           <strong>Current Weather App </strong> by Bernadett Marsalik

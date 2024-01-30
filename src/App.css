@@ -7,17 +7,16 @@ html {
 }
 
 .App {
-  height: 60vh !important;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   justify-items: center;
   align-items: center;
+  min-height: 100vh;
 }
 
 .searchIcon {
-  font-size: 2rem;
-  color: grey;
+  color: rgb(118, 118, 118);
 }
 
 .icon {
@@ -35,7 +34,7 @@ html {
 
 footer {
   font-size: 0.8em;
-  bottom: 0;
+  margin-top: 100px !important;
 }
 
 @keyframes spin {
@@ -62,7 +61,7 @@ footer {
 
 @media (min-width: 768px) {
   .app-wrapper {
-    width: 40%;
+    width: 80%;
   }
 }
 

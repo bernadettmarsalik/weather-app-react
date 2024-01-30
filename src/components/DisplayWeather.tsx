@@ -2,12 +2,11 @@ import { useCallback, useEffect, useState } from "react";
 import WeatherDataProps from "../utils/WeatherDataProps";
 import { GrSearch } from "react-icons/gr";
 import { GrLocation } from "react-icons/gr";
-import { WiHumidity } from "react-icons/wi";
-import { SiWindicss } from "react-icons/si";
-import { RiLoaderFill } from "react-icons/ri";
 import axios from "axios";
-import iconChanger from "../utils/iconChanger";
 import backgroundChanger from "../utils/backgroundChanger";
+import DefaultMessage from "./DefaultMessage";
+import Loading from "./Loading";
+import WeatherArea from "./WeatherArea";
 
 const DisplayWeather = () => {
   // api data
@@ -16,14 +15,10 @@ const DisplayWeather = () => {
 
   // constants
   const [geolocationError, setGeolocationError] = useState<string | null>(null);
-  //  weather data
   const [weatherData, setWeatherData] = useState<WeatherDataProps | null>(null);
-
-  // loading
   const [isLoading, setIsLoading] = useState(false);
-
-  // search city
   const [searchCity, setsearchCity] = useState<string>("");
+  const [showWeather, setShowWeather] = useState(false);
 
   // fetch current weather
   const fetchCurrentWeather = useCallback(
@@ -48,54 +43,88 @@ const DisplayWeather = () => {
     }
   };
 
-  // handle search
+  // render bg
+  const renderBackground = (weather: string) => {
+    return backgroundChanger(weather);
+  };
+
+  // get location
+  useEffect(() => {
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const { latitude, longitude } = position.coords;
+        fetchCurrentWeather(latitude, longitude)
+          .then((currentWeather) => {
+            setWeatherData(currentWeather);
+            setIsLoading(true);
+          })
+          .catch((error: Error) => {
+            setGeolocationError(error.message);
+          });
+      },
+      (error) => {
+        setGeolocationError(
+          "Error getting geolocation. Please try again or enter a city manually."
+        );
+      }
+    );
+  }, []);
+
+  // geolocation handle
+  const handleGeoLocationClick = () => {
+    setGeolocationError(null); // Reset geolocationError before attempting to fetch geolocation data
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const { latitude, longitude } = position.coords;
+        fetchCurrentWeather(latitude, longitude)
+          .then((currentWeather) => {
+            setWeatherData(currentWeather);
+            setIsLoading(true);
+            setShowWeather(true);
+          })
+          .catch((error) => {
+            setGeolocationError((error as Error).message);
+          });
+      },
+      (error) => {
+        setGeolocationError(
+          "Error getting geolocation. Please try again or enter a city manually."
+        );
+      }
+    );
+  };
+
+  // search handle
   const handleSearch = async () => {
+    setGeolocationError(null);
     if (searchCity.trim() === "") {
       return;
     }
     try {
       const { currentWeatherData } = await fetchWeatherData(searchCity);
       setWeatherData(currentWeatherData);
-    } catch (error) {}
+      setIsLoading(true);
+      setShowWeather(true);
+    } catch (error) {
+      setGeolocationError((error as Error).message);
+    }
   };
 
-  // location
-  useEffect(() => {
-    navigator.geolocation.getCurrentPosition((position) => {
-      const { latitude, longitude } = position.coords;
-      Promise.all([fetchCurrentWeather(latitude, longitude)]).then(
-        ([currentWeather]) => {
-          setWeatherData(currentWeather);
-          setIsLoading(true);
-        }
-      );
-    });
-  }, []);
-
-  // icon changer
-  const renderWeatherIcon = (weather: string) => {
-    return iconChanger(weather);
-  };
-
-  // background changer
-  const renderBackground = (weather: string) => {
-    return backgroundChanger(weather);
-  };
   return (
     <div className="app-wrapper container-fluid mt-3">
       <div
-        className="container shadow text-center p-4 rounded-5"
+        className="container shadow text-center p-3 rounded-5"
         style={{
           backgroundImage: `url(${
-            weatherData && isLoading
+            weatherData && isLoading && !geolocationError && showWeather
               ? renderBackground(weatherData.weather[0].main)
-              : ""
+              : renderBackground("")
           })`,
           backgroundSize: "cover",
           backgroundRepeat: "no-repeat",
         }}
       >
-        <div className="searchArea d-flex justify-content-between align-items-center">
+        <div className="searchArea d-flex justify-content-between align-items-start">
           <input
             type="text"
             placeholder="Enter a city"
@@ -106,60 +135,43 @@ const DisplayWeather = () => {
               if (e.key === "Enter") handleSearch();
             }}
           />
-          <div className="searchCircle">
+          <div className="searchCircle me-3">
             <GrSearch
-              className="searchIcon btn btn-lg border rounded-circle border-2 p-1 fs-1 me-3 bg-light"
+              className="searchIcon btn btn-lg border rounded-circle border-2 p-1 fs-1 bg-light"
               onClick={handleSearch}
             />
+            <p className="text-white mt-2">Search city</p>
           </div>
           <div className="geoCircle">
-            <GrLocation className="searchIcon btn btn-lg border rounded-circle border-2 p-1 fs-1 bg-light" />
+            <GrLocation
+              className="searchIcon btn btn-lg border rounded-circle border-2 p-1 fs-1 bg-light"
+              onClick={handleGeoLocationClick}
+            />
+            <p className="text-white mt-2">Locate me</p>
           </div>
         </div>
 
-        {weatherData && isLoading ? (
-          <div className="weatherArea my-1 p-3">
+        {geolocationError ? (
+          <div className="error-message my-3">
             <div
-              className="badge bg-transparent p-3 mb-3 rounded-5 shadow w-100"
-              style={{ backdropFilter: "blur(8px)" }}
+              className="bg-transparent p-3 mb-3 rounded-5 shadow w-100 fs-4 text-light"
+              style={{
+                backdropFilter: "blur(10px)",
+                height: "150px",
+              }}
             >
-              <h1 className="fs-1 mb-3">{weatherData.name}</h1>
-              <span className="fs-4 mb-5 mb-3">{weatherData.sys.country}</span>
-            </div>
-            <div className="container bg-light rounded-5 p-3 shadow">
-              <div className="icon mb-2 ">
-                {renderWeatherIcon(weatherData.weather[0].main)}{" "}
-              </div>
-              <h1 className="mb-3">{Math.round(weatherData.main.temp)} °C</h1>
-              <h2 className="mb-3">{weatherData.weather[0].main}</h2>
-            </div>
-            <div className="bottomInfoArea container rounded-5 d-flex flex-wrap justify-content-around mt-3 p-3 bg-light shadow">
-              <div className="humidity p-2">
-                <WiHumidity className="weatherIcon" />
-                <div className="weatherInfo">
-                  <h1>{weatherData.main.humidity}%</h1>
-                  <p>humidity</p>
-                </div>
-              </div>
-
-              <div className="wind p-2">
-                <SiWindicss className="weatherIcon" />
-                <div className="weatherInfo">
-                  <h1>{weatherData.wind.speed} km/h</h1>
-                  <p>wind speed</p>
-                </div>
-              </div>
+              <p>{geolocationError}</p>
             </div>
           </div>
+        ) : showWeather && weatherData && isLoading ? (
+          <WeatherArea weatherData={weatherData} />
+        ) : showWeather && isLoading ? (
+          <Loading />
         ) : (
-          <div className="loading my-3">
-            <RiLoaderFill className="loadingIcon" />
-            <p>loading...</p>
-          </div>
+          <DefaultMessage />
         )}
       </div>
     </div>
   );
 };
-
 export default DisplayWeather;
